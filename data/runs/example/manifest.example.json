@@ -1,0 +1,38 @@
+{
+  "run_id": "2026-W22-example",
+  "week_label": "2026-W22",
+  "app": "Groww",
+  "started_at": "2026-05-29T10:00:00Z",
+  "completed_at": "2026-05-29T10:25:00Z",
+  "status": "complete",
+  "inputs": {
+    "files": ["app_store_reviews.csv", "play_store_reviews.csv"],
+    "checksums": {
+      "app_store_reviews.csv": "sha256:redacted",
+      "play_store_reviews.csv": "sha256:redacted"
+    },
+    "reviews_in_window_count": 142
+  },
+  "analysis": {
+    "theme_count": 4,
+    "themes": [
+      { "label": "KYC verification", "count": 38 },
+      { "label": "Withdrawal delays", "count": 31 },
+      { "label": "App crashes", "count": 24 },
+      { "label": "Payments UPI", "count": 19 }
+    ],
+    "top_3": ["KYC verification", "Withdrawal delays", "App crashes"],
+    "top_3_rationale": "Ranked by in-window volume; ties broken by 1-2 star share per ADR-007.",
+    "word_count": 238,
+    "quote_source_ids": ["id-redacted-1", "id-redacted-2", "id-redacted-3"]
+  },
+  "pii_gate": "pass",
+  "delivery": {
+    "delivery_status": "complete",
+    "doc_url": "https://docs.google.com/document/d/example-redacted",
+    "draft_id": "draft-redacted",
+    "docs_mcp_tool": "record-your-tool-name",
+    "gmail_mcp_tool": "record-your-tool-name"
+  },
+  "warnings": []
+}

@@ -1,0 +1,62 @@
+# WeeklyPulse — default configuration
+# Override via WEEKLYPULSE_CONFIG path or --config flag.
+# See config/README.md for operator guide.
+
+app:
+  name: Groww
+  platforms:
+    - ios
+    - android
+
+ingestion:
+  # ADR-012: default 10 weeks within allowed 8–12 range
+  review_window_weeks: 10
+  review_window_min_weeks: 8
+  review_window_max_weeks: 12
+  raw_input_dir: data/raw
+  processed_output: data/processed/reviews.jsonl
+  min_reviews_warn: 30
+  min_reviews_abort: 10
+  # ADR-020, ADR-021, ADR-022 — normalization filters
+  min_words: 6
+  english_only: true
+  reject_emojis: true
+  language_confidence_min: 0.7
+  # Keep at most N reviews after filters (newest first); 0 = no cap
+  max_reviews: 1000
+
+download:
+  play_package: com.nextbillion.groww
+  app_store_id: "1404871703"
+  country: in
+  lang: en
+  count_per_platform: 1000
+
+analysis:
+  max_themes: 5
+  top_themes_in_pulse: 3
+  quotes_count: 3
+  action_ideas_count: 3
+  pulse_word_limit: 250
+  word_count_includes_headings: false
+  themes_output: data/processed/themes.json
+  pulse_markdown_output: data/output/pulse.md
+  pulse_json_output: data/output/pulse.json
+  # Groq LLM settings (ADR-006: agent-assisted synthesis)
+  llm_enabled: true
+  llm_model: llama-3.3-70b-versatile
+  llm_max_tokens: 1024
+
+delivery:
+  draft_to: "${WEEKLYPULSE_DRAFT_TO:}"
+  subject_pattern: "WeeklyPulse — Groww — {week_label}"
+  doc_title_pattern: "WeeklyPulse — Groww — {week_label}"
+  email_mode: teaser_and_link
+  docs_before_gmail: true
+
+runs:
+  runs_dir: data/runs
+  week_label_format: "%G-W%V"
+
+manifest:
+  template: templates/manifest.template.json

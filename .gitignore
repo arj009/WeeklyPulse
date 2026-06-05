@@ -1,0 +1,54 @@
+# Raw review exports — never commit
+data/raw/**
+!data/raw/.gitkeep
+!data/raw/README.md
+
+# Local env and secrets
+.env
+.env.*
+!.env.example
+*.pem
+credentials.json
+Credential.json
+client_secret*.json
+token.json
+secrets/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.venv/
+venv/
+env/
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large or generated local data (keep examples only)
+data/processed/*
+!data/processed/.gitkeep
+!data/processed/README.md
+!data/processed/ingestion_summary.json
+data/processed/test_reviews.jsonl
+data/output/*
+!data/output/.gitkeep
+!data/output/README.md
+data/runs/*
+!data/runs/.gitkeep
+!data/runs/README.md
+!data/runs/example/
+!data/runs/smoke-mcp-notes.md

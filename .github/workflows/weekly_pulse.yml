@@ -1,0 +1,39 @@
+name: WeeklyPulse Scheduled Run
+
+on:
+  schedule:
+    # Runs every Monday at 08:00 IST (02:30 UTC)
+    - cron: '30 2 * * 1'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: pip install -e .
+
+      - name: Run WeeklyPulse Pipeline
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          WEEKLYPULSE_DRAFT_TO: ${{ secrets.WEEKLYPULSE_DRAFT_TO }}
+        run: |
+          # The pipeline requires data/raw to be populated. 
+          # In a real setup, a step here would download the exports first.
+          python -m weeklypulse run
+          
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: weekly-pulse-artifacts
+          path: data/runs/

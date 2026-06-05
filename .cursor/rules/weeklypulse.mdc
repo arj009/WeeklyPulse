@@ -1,0 +1,15 @@
+---
+description: WeeklyPulse agent rules — Groww weekly review pulse via MCP
+globs:
+  - "**/*"
+---
+
+# WeeklyPulse
+
+- Target app: **Groww** (iOS + Android public exports in `data/raw/`).
+- **No PII** in outputs; PII gate must pass before any Google MCP call.
+- **Google Docs and Gmail only via MCP** — never add direct Google API clients to the repo.
+- Follow `prompts/weekly-run.md` for weekly orchestration.
+- Config: `config/default.yaml` — see `config/README.md`.
+- Phase eval gates: `docs/phases/phase-NN-*/eval.md`.
+- Architecture: `docs/architecture.md`; decisions: `docs/decision.md`.

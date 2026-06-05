@@ -1,0 +1,18 @@
+{
+  "week_label": "2026-W22",
+  "app": "Groww",
+  "reviews_in_window_count": 142,
+  "theme_count": 4,
+  "top_3": [
+    "KYC verification",
+    "Withdrawal delays",
+    "App crashes"
+  ],
+  "word_count": 238,
+  "pii_gate": "pass",
+  "delivery_status": "complete",
+  "doc_url": "https://docs.google.com/document/d/REDACTED_EXAMPLE/edit",
+  "draft_id": "r1234567890",
+  "errors": [],
+  "doc_action": "created"
+}

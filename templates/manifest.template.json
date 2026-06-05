@@ -1,0 +1,31 @@
+{
+  "_comment": "WeeklyPulse run manifest template (Phase 1). Copy to data/runs/YYYY-Www/manifest.json per run. No PII.",
+  "run_id": "",
+  "week_label": "YYYY-Www",
+  "app": "Groww",
+  "started_at": "",
+  "completed_at": null,
+  "status": "pending",
+  "inputs": {
+    "files": [],
+    "checksums": {},
+    "reviews_in_window_count": 0
+  },
+  "analysis": {
+    "theme_count": 0,
+    "themes": [],
+    "top_3": [],
+    "top_3_rationale": "",
+    "word_count": 0,
+    "quote_source_ids": []
+  },
+  "pii_gate": "not_run",
+  "delivery": {
+    "delivery_status": "not_started",
+    "doc_url": null,
+    "draft_id": null,
+    "docs_mcp_tool": null,
+    "gmail_mcp_tool": null
+  },
+  "warnings": []
+}
