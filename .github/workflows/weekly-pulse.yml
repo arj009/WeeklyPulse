@@ -1,0 +1,107 @@
+name: WeeklyPulse Pipeline
+
+on:
+  # Run every Sunday at 6:00 AM UTC
+  schedule:
+    - cron: '0 6 * * 0'
+  
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      week_label:
+        description: 'ISO week label (e.g., 2026-W22)'
+        required: false
+        default: 'auto'
+
+env:
+  RENDER_API_URL: https://weeklypulse.onrender.com
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+
+jobs:
+  trigger-pipeline:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Calculate week label
+        id: week
+        run: |
+          if [ "${{ github.event.inputs.week_label }}" = "auto" ] || [ -z "${{ github.event.inputs.week_label }}" ]; then
+            WEEK_LABEL=$(date -u +'%Y-W%V')
+            echo "week_label=$WEEK_LABEL" >> $GITHUB_OUTPUT
+            echo "Using auto-calculated week: $WEEK_LABEL"
+          else
+            echo "week_label=${{ github.event.inputs.week_label }}" >> $GITHUB_OUTPUT
+            echo "Using manual week: ${{ github.event.inputs.week_label }}"
+          fi
+      
+      - name: Trigger Render Pipeline
+        id: trigger
+        run: |
+          echo "Triggering WeeklyPulse pipeline on Render..."
+          echo "Week: ${{ steps.week.outputs.week_label }}"
+          
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+            "${{ env.RENDER_API_URL }}/trigger" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            -d "{\"week_label\": \"${{ steps.week.outputs.week_label }}\"}")
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response: $BODY"
+          echo "HTTP Code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Pipeline triggered successfully!"
+            echo "status=success" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Failed to trigger pipeline"
+            echo "status=failed" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+      
+      - name: Wait for Pipeline Completion
+        if: steps.trigger.outputs.status == 'success'
+        run: |
+          echo "Waiting for pipeline to complete (this may take 5-15 minutes)..."
+          
+          # Wait 10 minutes for pipeline to complete
+          sleep 600
+          
+          echo "Pipeline execution window complete"
+      
+      - name: Check Pipeline Status
+        if: always()
+        run: |
+          echo "=========================================="
+          echo "WeeklyPulse Pipeline Execution Summary"
+          echo "=========================================="
+          echo ""
+          echo "Week: ${{ steps.week.outputs.week_label }}"
+          echo "Trigger Time: $(date -u)"
+          echo "Render URL: ${{ env.RENDER_API_URL }}"
+          echo ""
+          echo "Next Steps:"
+          echo "1. Check Render logs for detailed execution: ${{ env.RENDER_API_URL }}"
+          echo "2. Check Google Drive for the pulse document"
+          echo "3. Check Gmail Drafts for the email draft"
+          echo "4. Review and send the email draft manually"
+          echo ""
+          echo "=========================================="
+      
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ WeeklyPulse pipeline failed!"
+          echo ""
+          echo "Troubleshooting:"
+          echo "1. Check Render logs: ${{ env.RENDER_API_URL }}"
+          echo "2. Verify GROQ_API_KEY secret is set"
+          echo "3. Verify Render API is running"
+          echo "4. Check environment variables in Render dashboard"
+          echo ""
+          echo "Manual trigger: Go to Actions → WeeklyPulse Pipeline → Run workflow"
