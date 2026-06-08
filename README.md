@@ -94,10 +94,10 @@ If the PII gate fails or a file cannot be parsed, the agent will stop. See the [
 | `weeklypulse analyze` | 3 | Themes + pulse |
 | `weeklypulse run` | 5 | Full pipeline |
 
-## Phase 6: Cloud Automation (GitHub Actions & Railway)
+## Phase 6: Cloud Automation (GitHub Actions & Render)
 WeeklyPulse supports headless execution for cloud deployments:
-- **GitHub Actions (`.github/workflows/weekly_pulse.yml`)**: Runs automatically on a cron schedule. Ensure you set your Secrets (`GROQ_API_KEY`, `GOOGLE_SERVICE_ACCOUNT_JSON`, etc.).
-- **Railway API (`railway.json` & `main_api.py`)**: Deploy to Railway to host a FastAPI instance. Hit the `POST /trigger` endpoint to manually trigger a run remotely.
+- **GitHub Actions (`.github/workflows/weekly_pulse.yml`)**: Runs automatically on a cron schedule. Ensure you set your Secrets (`GROQ_API_KEY`, `GOOGLE_CREDENTIALS_JSON`, `GOOGLE_TOKEN_JSON`, etc.).
+- **Render Deployment (`render.yaml` & MCP server)**: Deploy to Render to host the MCP server. See [docs/deployment/render-deployment.md](./docs/deployment/render-deployment.md) for complete setup instructions.
 
 ## License
 

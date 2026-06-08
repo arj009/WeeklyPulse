@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: weeklypulse-mcp-server
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: pip install -e .
+    startCommand: python -m weeklypulse.delivery.mcp_google_server
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: GROQ_API_KEY
+        sync: false
+      - key: WEEKLYPULSE_DRAFT_TO
+        sync: false
+      - key: APP_NAME
+        value: Groww
+    healthCheckPath: /health
+    autoDeploy: true

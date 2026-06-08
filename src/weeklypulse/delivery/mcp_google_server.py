@@ -65,7 +65,48 @@ def get_token_path() -> Path:
 
 
 def get_credentials() -> Credentials:
-    """Load or refresh Google OAuth credentials."""
+    """Load or refresh Google OAuth credentials.
+    
+    Supports both file-based (local) and environment variable (cloud) credentials.
+    """
+    # Check for cloud deployment (environment variables)
+    creds_json = os.environ.get("GOOGLE_CREDENTIALS_JSON")
+    token_json = os.environ.get("GOOGLE_TOKEN_JSON")
+    
+    if creds_json and token_json:
+        # Cloud deployment - use environment variables
+        logger.info("Loading credentials from environment variables (cloud mode)")
+        import tempfile
+        
+        # Write credentials to temporary files
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as cred_file:
+            cred_file.write(creds_json)
+            cred_path = cred_file.name
+        
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as token_file:
+            token_file.write(token_json)
+            token_path_str = token_file.name
+        
+        creds = Credentials.from_authorized_user_file(token_path_str, SCOPES)
+        
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+                # Update token file with refreshed credentials
+                with open(token_path_str, 'w') as f:
+                    f.write(creds.to_json())
+                logger.info("Credentials refreshed")
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(cred_path, SCOPES)
+                creds = flow.run_local_server(port=0)
+                with open(token_path_str, 'w') as f:
+                    f.write(creds.to_json())
+                logger.info("New credentials obtained")
+        
+        return creds
+    
+    # Local development - use files
+    logger.info("Loading credentials from files (local mode)")
     token_path = get_token_path()
     creds = None
     
