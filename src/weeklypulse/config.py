@@ -11,7 +11,27 @@ import yaml
 
 REQUIRED_TOP_LEVEL = ("app", "ingestion", "analysis", "delivery", "runs", "manifest")
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+# Try multiple strategies to find repo root
+def _find_repo_root() -> Path:
+    """Find the repository root by looking for config/default.yaml."""
+    current = Path(__file__).resolve().parent
+    
+    # Strategy 1: Search up to 5 levels for config/default.yaml
+    for _ in range(5):
+        config_path = current / "config" / "default.yaml"
+        if config_path.is_file():
+            return current
+        current = current.parent
+    
+    # Strategy 2: Check /opt/render/project/src (Render deployment)
+    render_path = Path("/opt/render/project/src")
+    if (render_path / "config" / "default.yaml").is_file():
+        return render_path
+    
+    # Fallback
+    return Path(__file__).resolve().parents[2]
+
+REPO_ROOT = _find_repo_root()
 DEFAULT_CONFIG_PATH = REPO_ROOT / "config" / "default.yaml"
 
 
