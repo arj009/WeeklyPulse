@@ -97,6 +97,10 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
 def _cmd_run(args: argparse.Namespace) -> int:
     from weeklypulse.ingestion import run_ingestion
     from weeklypulse.analysis import run_analysis
+    from weeklypulse.delivery.delivery import deliver_pulse_via_mcp
+    from weeklypulse.foundation.config import load_config
+    from pathlib import Path
+    import os
     
     try:
         cfg = load_config()
@@ -115,13 +119,50 @@ def _cmd_run(args: argparse.Namespace) -> int:
         if summary_analyze["status"] == "pii_failed":
             print(f"PII Gate Failed: {summary_analyze['message']}", file=sys.stderr)
             return 2
+        
+        # 3. Deliver via MCP (Google Docs + Gmail)
+        print("\n--- Step 3: Delivering via MCP ---")
+        week_label = summary_analyze.get("week_label", "unknown")
+        pulse_md = summary_analyze.get("pulse_md", "")
+        app_name = cfg.get("app_name", "Groww")
+        recipient = os.environ.get("WEEKLYPULSE_DRAFT_TO", "aunkarranjan@gmail.com")
+        manifest_path = Path(cfg.get("manifest_path", "data/manifest.json"))
+        
+        if not pulse_md:
+            print("ERROR: No pulse content to deliver", file=sys.stderr)
+            return 2
+        
+        print(f"Delivering pulse for {week_label}...")
+        print(f"App: {app_name}")
+        print(f"Recipient: {recipient}")
+        
+        delivery_result = deliver_pulse_via_mcp(
+            pulse_md=pulse_md,
+            week_label=week_label,
+            app_name=app_name,
+            recipient=recipient,
+            manifest_path=manifest_path,
+            dry_run=False,
+        )
+        
+        if delivery_result["delivery_status"] == "complete":
+            print(f"\n✅ Delivery complete!")
+            print(f"   Doc URL: {delivery_result.get('doc_url')}")
+            print(f"   Draft ID: {delivery_result.get('draft_id')}")
+            print(f"\n📧 Check Gmail Drafts and send the email!")
+        else:
+            print(f"\n⚠️ Delivery status: {delivery_result['delivery_status']}")
+            if delivery_result.get("errors"):
+                print(f"   Errors: {delivery_result['errors']}", file=sys.stderr)
+            return 2
             
         print("\n--- Pipeline Complete ---")
-        print("Next: Agent should proceed with MCP Delivery.")
         return 0
         
     except Exception as e:
         print(f"Run failed: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc()
         return 1
 
 
