@@ -98,7 +98,7 @@ def _cmd_run(args: argparse.Namespace) -> int:
     from weeklypulse.ingestion import run_ingestion
     from weeklypulse.analysis import run_analysis
     from weeklypulse.delivery.delivery import deliver_pulse_via_mcp
-    from weeklypulse.foundation.config import load_config
+    from weeklypulse.config import load_config
     from pathlib import Path
     import os
     
