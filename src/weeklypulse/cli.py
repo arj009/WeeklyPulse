@@ -95,7 +95,7 @@ def _cmd_analyze(args: argparse.Namespace) -> int:
 
 
 def _cmd_run(args: argparse.Namespace) -> int:
-    from weeklypulse.ingestion import run_ingestion
+    from weeklypulse.ingestion import run_download, run_ingestion
     from weeklypulse.analysis import run_analysis
     from weeklypulse.delivery.delivery import deliver_pulse_via_mcp
     from weeklypulse.config import load_config
@@ -105,6 +105,13 @@ def _cmd_run(args: argparse.Namespace) -> int:
     try:
         cfg = load_config()
         print("Starting E2E run pipeline...")
+        
+        # 0. Download latest reviews
+        print("\n--- Step 0: Downloading Reviews ---")
+        print("Downloading from Play Store and App Store...")
+        download_result = run_download(cfg, count=None)
+        print(f"✅ Downloaded {download_result['play_store']['count']} Play Store reviews")
+        print(f"✅ Downloaded {download_result['app_store']['count']} App Store reviews")
         
         # 1. Ingest
         print("\n--- Step 1: Ingesting ---")
