@@ -110,8 +110,8 @@ def _cmd_run(args: argparse.Namespace) -> int:
         print("\n--- Step 0: Downloading Reviews ---")
         print("Downloading from Play Store and App Store...")
         download_result = run_download(cfg, count=None)
-        print(f"✅ Downloaded {download_result['play_store']['count']} Play Store reviews")
-        print(f"✅ Downloaded {download_result['app_store']['count']} App Store reviews")
+        print(f"✅ Play Store reviews downloaded to: {download_result['play_store']['path']}")
+        print(f"✅ App Store reviews downloaded to: {download_result['app_store']['path']}")
         
         # 1. Ingest
         print("\n--- Step 1: Ingesting ---")
