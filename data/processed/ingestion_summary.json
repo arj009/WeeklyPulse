@@ -1,16 +1,16 @@
 {
-  "as_of": "2026-05-29",
+  "as_of": "2026-06-11",
   "window_weeks": 10,
   "files_loaded": [
-    "app_store_sample.csv",
-    "play_store_sample.csv"
+    "app_store_reviews.csv",
+    "play_store_reviews.csv"
   ],
-  "parsed_rows": 12,
-  "excluded_by_window": 1,
+  "parsed_rows": 1050,
+  "excluded_by_window": 0,
   "excluded_by_filters": {
-    "too_few_words": 2,
-    "not_english": 2,
-    "contains_emoji": 1
+    "contains_emoji": 146,
+    "too_few_words": 632,
+    "not_english": 37
   },
   "filter_rules": {
     "min_words": 6,
@@ -20,26 +20,25 @@
   "dedupe_removed": 0,
   "capped_to_max_reviews": 0,
   "max_reviews": 1000,
-  "reviews_in_window_count": 6,
+  "reviews_in_window_count": 235,
   "by_platform": {
-    "ios": 4,
-    "android": 2
+    "ios": 23,
+    "android": 212
   },
   "by_rating": {
-    "2": 2,
-    "3": 1,
-    "4": 1,
-    "5": 2
+    "1": 89,
+    "2": 12,
+    "3": 13,
+    "4": 23,
+    "5": 98
   },
   "date_range": {
-    "oldest": "2026-04-01",
-    "newest": "2026-05-22"
+    "oldest": "2026-06-02",
+    "newest": "2026-06-10"
   },
   "parse_errors": [],
-  "output": "data/processed/test_reviews.jsonl",
-  "warnings": [
-    "Low volume: 6 reviews (warn below 30)"
-  ],
-  "abort_recommended": true,
+  "output": "data/processed/reviews.jsonl",
+  "warnings": [],
+  "abort_recommended": false,
   "week_gaps": []
 }

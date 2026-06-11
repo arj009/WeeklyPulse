@@ -1,0 +1,13 @@
+{
+  "week_label": "unknown",
+  "delivery": {
+    "status": "failed",
+    "doc_url": null,
+    "doc_id": null,
+    "doc_action": null,
+    "draft_id": null,
+    "errors": [
+      "HTTPSConnectionPool(host='oauth2.googleapis.com', port=443): Max retries exceeded with url: /token (Caused by ConnectTimeoutError(<HTTPSConnection(host='oauth2.googleapis.com', port=443) at 0x1f765577450>, 'Connection to oauth2.googleapis.com timed out. (connect timeout=120)'))"
+    ]
+  }
+}

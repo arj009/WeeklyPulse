@@ -212,6 +212,8 @@ def run_analysis(
         "llm_enabled": llm_enabled,
         "llm_model": llm_model if llm_enabled else None,
         "themes_json": themes_path,
+        "pulse_md": md,  # Full pulse markdown for delivery
+        "week_label": pulse.week_label,  # Week label for delivery
         **pulse_files,
     }
 
