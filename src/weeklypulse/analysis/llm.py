@@ -204,6 +204,59 @@ def polish_pulse_with_llm(
         return None
 
 
+# ── 4. Sentiment analysis ────────────────────────────────────────────────
+
+
+_SYSTEM_SENTIMENT = """\
+You are a sentiment analysis expert for Groww (Indian fintech / investing app).
+Analyze the sentiment of user reviews and classify them as positive, negative, or neutral.
+
+Rules:
+- Positive: Users expressing satisfaction, praise, or happiness
+- Negative: Users expressing frustration, complaints, or disappointment  
+- Neutral: Mixed feelings, factual statements, or balanced feedback
+- Return ONLY valid JSON: {"positive": count, "negative": count, "neutral": count}
+- No markdown formatting, no code fences, no extra commentary
+"""
+
+
+def analyze_sentiment_with_llm(
+    reviews: list[dict[str, Any]],
+    model: str = "llama-3.3-70b-versatile",
+) -> dict[str, int]:
+    """Ask Groq to analyze sentiment of reviews.
+    
+    Args:
+        reviews: list of review dicts with text/rating
+        
+    Returns:
+        dict with positive, negative, neutral counts
+    """
+    # Sample up to 50 reviews for analysis (to avoid token limits)
+    sample = reviews[:50]
+    review_text = "\n".join(
+        f'- "{r.get("text", r.get("review", ""))}"' 
+        for r in sample
+    )
+    
+    user_prompt = f"Analyze sentiment of these {len(sample)} reviews:\n\n{review_text}"
+    
+    try:
+        raw = _chat(_SYSTEM_SENTIMENT, user_prompt, model=model, max_tokens=200)
+        raw = raw.strip()
+        if raw.startswith("```"):
+            raw = raw.split("\n", 1)[-1].rsplit("```", 1)[0].strip()
+        
+        parsed = json.loads(raw)
+        return {
+            "positive": parsed.get("positive", 0),
+            "negative": parsed.get("negative", 0),
+            "neutral": parsed.get("neutral", 0),
+        }
+    except Exception:
+        return {"positive": 0, "negative": 0, "neutral": 0}
+
+
 # ── Convenience: check if LLM is available ────────────────────────────────
 
 

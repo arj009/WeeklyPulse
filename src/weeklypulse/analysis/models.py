@@ -70,6 +70,7 @@ class Pulse:
     actions: list[ActionIdea]
     body_word_count: int = 0
     pii_gate: str = "not_run"  # not_run | pass | fail
+    sentiment: dict[str, Any] = field(default_factory=dict)  # positive/negative/neutral percentages
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -82,4 +83,5 @@ class Pulse:
             "actions": [a.to_dict() for a in self.actions],
             "body_word_count": self.body_word_count,
             "pii_gate": self.pii_gate,
+            "sentiment": self.sentiment,
         }

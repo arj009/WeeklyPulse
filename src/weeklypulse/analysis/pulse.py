@@ -42,6 +42,11 @@ _ACTIONS_SECTION = """\
 {action_lines}
 """
 
+_SENTIMENT_SECTION = """\
+## Sentiment Analysis
+{sentiment_lines}
+"""
+
 
 def _theme_lines(themes: list[Theme]) -> str:
     """Format top 3 themes as numbered bullets."""
@@ -78,6 +83,26 @@ def _action_lines(actions: list[ActionIdea]) -> str:
     return "\n".join(lines)
 
 
+def _sentiment_lines(sentiment: dict[str, int], total_reviews: int) -> str:
+    """Format sentiment analysis as percentages with visual indicators."""
+    total = sentiment.get("positive", 0) + sentiment.get("negative", 0) + sentiment.get("neutral", 0)
+    
+    if total == 0:
+        return "No sentiment data available"
+    
+    positive_pct = int((sentiment.get("positive", 0) / total) * 100)
+    negative_pct = int((sentiment.get("negative", 0) / total) * 100)
+    neutral_pct = int((sentiment.get("neutral", 0) / total) * 100)
+    
+    lines = [
+        f"- Positive: {positive_pct}% \u2191 ({sentiment.get('positive', 0)} reviews)",
+        f"- Negative: {negative_pct}% \u2193 ({sentiment.get('negative', 0)} reviews)",
+        f"- Neutral: {neutral_pct}% \u2192 ({sentiment.get('neutral', 0)} reviews)",
+        f"\n**Total reviews analyzed:** {total_reviews}",
+    ]
+    return "\n".join(lines)
+
+
 def compose_pulse_md(pulse: Pulse) -> str:
     """Compose full pulse markdown from a Pulse object."""
     header = _HEADER_TEMPLATE.format(
@@ -90,8 +115,15 @@ def compose_pulse_md(pulse: Pulse) -> str:
     themes_section = _THEMES_SECTION.format(theme_lines=_theme_lines(pulse.themes))
     quotes_section = _QUOTES_SECTION.format(quote_lines=_quote_lines(pulse.quotes))
     actions_section = _ACTIONS_SECTION.format(action_lines=_action_lines(pulse.actions))
+    
+    # Add sentiment section if available
+    sentiment_section = ""
+    if pulse.sentiment:
+        sentiment_section = _SENTIMENT_SECTION.format(
+            sentiment_lines=_sentiment_lines(pulse.sentiment, len(pulse.themes) * 100)  # Approximate total reviews
+        )
 
-    return header + themes_section + quotes_section + actions_section
+    return header + themes_section + quotes_section + actions_section + sentiment_section
 
 
 def body_text(md: str) -> str:

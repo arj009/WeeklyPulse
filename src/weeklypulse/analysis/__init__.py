@@ -142,6 +142,15 @@ def run_analysis(
             actions = generate_default_actions(themes)
     else:
         actions = generate_default_actions(themes)
+    
+    # --- Step 5b: Sentiment analysis (LLM-powered) ---
+    sentiment = {"positive": 0, "negative": 0, "neutral": 0}
+    if llm_enabled:
+        from weeklypulse.analysis.llm import is_llm_available, analyze_sentiment_with_llm
+        if is_llm_available():
+            logger.info("LLM enabled: analyzing sentiment with Groq")
+            sentiment = analyze_sentiment_with_llm(reviews, model=llm_model)
+            logger.info(f"Sentiment: {sentiment}")
 
     # --- Step 6: Compose pulse ---
     as_of_d = (
@@ -155,6 +164,7 @@ def run_analysis(
         themes=themes,
         quotes=quotes,
         actions=actions,
+        sentiment=sentiment,
     )
 
     md = compose_pulse_md(pulse)
@@ -214,6 +224,7 @@ def run_analysis(
         "themes_json": themes_path,
         "pulse_md": md,  # Full pulse markdown for delivery
         "week_label": pulse.week_label,  # Week label for delivery
+        "sentiment": sentiment,  # Sentiment analysis for delivery
         **pulse_files,
     }
 
