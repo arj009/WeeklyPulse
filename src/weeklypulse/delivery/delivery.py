@@ -184,13 +184,20 @@ def _generate_email_teaser(pulse_md: str, max_lines: int = 10) -> str:
     for line in lines:
         stripped = line.strip()
         
-        # Detect section headers
+        # Detect section headers (## or ###)
         if stripped.startswith("## "):
             # Save previous section if it had content
             if current_section and section_content:
                 email_sections.append((current_section, section_content[:max_lines]))
             
             current_section = stripped[3:]  # Remove "## "
+            section_content = []
+        elif stripped.startswith("### "):
+            # Save previous section if it had content
+            if current_section and section_content:
+                email_sections.append((current_section, section_content[:max_lines]))
+            
+            current_section = stripped[4:]  # Remove "### "
             section_content = []
         elif stripped and current_section:
             section_content.append(stripped)
@@ -202,28 +209,19 @@ def _generate_email_teaser(pulse_md: str, max_lines: int = 10) -> str:
     # Build email body
     email_body = []
     
-    # Include key sections (hybrid approach)
-    sections_to_include = [
-        "Key Themes",
-        "Top User Quotes", 
-        "Action Items",
-        "Sentiment Analysis"
-    ]
-    
+    # Include ALL sections (full pulse content in email)
     for section_name, section_lines in email_sections:
-        # Check if this section should be included
-        if any(s.lower() in section_name.lower() for s in sections_to_include):
-            email_body.append(f"\n{section_name.upper()}")
-            email_body.append("-" * len(section_name))
-            
-            for line in section_lines:
-                # Skip empty lines at start
-                if line:
-                    email_body.append(line)
+        email_body.append(f"\n{section_name.upper()}")
+        email_body.append("=" * len(section_name))
+        
+        for line in section_lines:
+            # Skip empty lines at start
+            if line:
+                email_body.append(line)
     
-    # Add doc link
+    # Add doc link at the end
     email_body.append("\n" + "=" * 50)
-    email_body.append("📄 View full pulse with all sections and metrics in Google Docs:")
+    email_body.append("📄 View full pulse with formatting and metrics in Google Docs:")
     
     return "\n".join(email_body)
 
