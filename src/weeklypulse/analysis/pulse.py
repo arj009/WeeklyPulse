@@ -210,8 +210,8 @@ def write_pulse_files(
     )
 
     return {
-        "pulse_md": str(md_path.relative_to(REPO_ROOT)).replace("\\", "/"),
-        "pulse_json": str(json_path.relative_to(REPO_ROOT)).replace("\\", "/"),
+        "pulse_md_path": str(md_path.relative_to(REPO_ROOT)).replace("\\", "/"),
+        "pulse_json_path": str(json_path.relative_to(REPO_ROOT)).replace("\\", "/"),
     }
 
 
